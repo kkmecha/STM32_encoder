@@ -9,7 +9,8 @@
 
 #define MAX_TIMER_VALUE_HALF 32768 //16bitの最高値の半分だから32768
 
-class STM32_encoder{
+class STM32_encoder
+{
     public: 
     STM32_encoder(PinName a, PinName b);
     void start();
