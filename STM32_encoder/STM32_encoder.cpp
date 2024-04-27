@@ -4,7 +4,8 @@
 #include "mbed.h"
 #include "STM32_encoder.h"
 
-STM32_encoder::STM32_encoder(PinName a, PinName b){
+STM32_encoder::STM32_encoder(PinName a, PinName b)
+{
     HAL_TIM_Encoder_MspInit(&_htim, a, b);
     _timer_instance_setting();
     _encoder_instance_setting();
@@ -78,7 +79,8 @@ void STM32_encoder::HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim, PinName a, 
     }
 }
 
-void STM32_encoder::_timer_instance_setting(){
+void STM32_encoder::_timer_instance_setting()
+{
     if(_tim == _timer_select::tim_3){
         _htim.Instance = TIM3; /* 使うタイマー */  // １つ目のエンコーダー
     }else if(_tim == _timer_select::tim_4){
@@ -90,7 +92,8 @@ void STM32_encoder::_timer_instance_setting(){
         _htim.Init.CounterMode = TIM_COUNTERMODE_UP;
 }
 
-void STM32_encoder::_encoder_instance_setting(){
+void STM32_encoder::_encoder_instance_setting()
+{
        /*4逓倍で読みたい*/
     encoder.EncoderMode = TIM_ENCODERMODE_TI12; /* CH1、CH2両方読む*/
     encoder.IC1Filter = 0x0f;
@@ -104,12 +107,14 @@ void STM32_encoder::_encoder_instance_setting(){
     encoder.IC2Selection = TIM_ICSELECTION_DIRECTTI;
 }
 
-void STM32_encoder::start(){
+void STM32_encoder::start()
+{
     HAL_TIM_Encoder_Init(&_htim, &encoder);
     HAL_TIM_Encoder_Start(&_htim,TIM_CHANNEL_ALL);
 }
 
-void STM32_encoder::reset(){
+void STM32_encoder::reset()
+{
     core_util_critical_section_enter();
     __HAL_TIM_CLEAR_FLAG(&_htim, TIM_IT_UPDATE);
     core_util_critical_section_exit();
@@ -122,8 +127,7 @@ int32_t STM32_encoder::get_count()
     if(_tim == _timer_select::tim_3){
         core_util_critical_section_enter();
         _count = TIM3->CNT;
-        if ((TIM3->SR & (TIM_FLAG_UPDATE)) == (TIM_FLAG_UPDATE))
-        {
+        if ((TIM3->SR & (TIM_FLAG_UPDATE)) == (TIM_FLAG_UPDATE)){
             TIM3->SR = ~(TIM_IT_UPDATE);
             if (TIM3->CNT < MAX_TIMER_VALUE_HALF)
                 _encoder_high_bits += 1;
@@ -136,8 +140,7 @@ int32_t STM32_encoder::get_count()
     }else if(_tim == _timer_select::tim_4){
         core_util_critical_section_enter();
         _count = TIM4->CNT;
-        if ((TIM4->SR & (TIM_FLAG_UPDATE)) == (TIM_FLAG_UPDATE))
-        {
+        if ((TIM4->SR & (TIM_FLAG_UPDATE)) == (TIM_FLAG_UPDATE)){
             TIM4->SR = ~(TIM_IT_UPDATE);
             if (TIM4->CNT < MAX_TIMER_VALUE_HALF)
                 _encoder_high_bits += 1;
