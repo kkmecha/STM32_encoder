@@ -51,23 +51,22 @@ void STM32_encoder::HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim, PinName sli
     _GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     _GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
 
-    if(name == MicroControler_Type::F767ZI){
-        for(const TIM_Pin_Map& mapping : tim_mappings){ // 配列の全要素の走査
-            if(mapping.Pin_name.pin_a == slit_a && mapping.Pin_name.pin_b == slit_b){ // 引数で指定されたピンがTIM_Pin_Mapとあっているか確認
-                _htim.Instance = mapping.tim_instance;
-                if(mapping.tim_instance == TIM3){
-                    __TIM3_CLK_ENABLE();
-                }else if(mapping.tim_instance == TIM4){
-                    __TIM4_CLK_ENABLE();
-                }
-                _GPIO_InitStruct.Pin = mapping.Pin_name.pin_a_selected | mapping.Pin_name.pin_b_selected;
-                _GPIO_InitStruct.Alternate = mapping.pin_alternate;
-                HAL_GPIO_Init(mapping.gpio_port, &_GPIO_InitStruct);
-                return;
+    for(const TIM_Pin_Map& mapping : tim_mappings){ // 配列の全要素の走査
+        if(mapping.Pin_name.pin_a == slit_a && mapping.Pin_name.pin_b == slit_b){ // 引数で指定されたピンがTIM_Pin_Mapとあっているか確認
+            _htim.Instance = mapping.tim_instance;
+            if(mapping.tim_instance == TIM3){
+                __TIM3_CLK_ENABLE();
+            }else if(mapping.tim_instance == TIM4){
+                __TIM4_CLK_ENABLE();
             }
+            _GPIO_InitStruct.Pin = mapping.Pin_name.pin_a_selected | mapping.Pin_name.pin_b_selected;
+            _GPIO_InitStruct.Alternate = mapping.pin_alternate;
+            HAL_GPIO_Init(mapping.gpio_port, &_GPIO_InitStruct);
+            return;
         }
-        printf("GPIO pin map not found\r\n"); // STM32_encoderのpinmapの中で例外が起きた時の処理
     }
+    printf("GPIO pin map not found\r\n"); // STM32_encoderのpinmapの中で例外が起きた時の処理
+    
 }
 
 void STM32_encoder::start(){
