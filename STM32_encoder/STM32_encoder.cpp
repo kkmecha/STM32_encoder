@@ -20,9 +20,9 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     #endif
 };
 
-STM32_encoder::STM32_encoder(MicroControler_Type name, PinName slit_a, PinName slit_b)
+STM32_encoder::STM32_encoder(PinName slit_a, PinName slit_b)
 {
-    HAL_TIM_Encoder_MspInit(&_htim, name, slit_a, slit_b);
+    HAL_TIM_Encoder_MspInit(&_htim, slit_a, slit_b);
 
     // timer
     _htim.Init.Period = 0xffff;
@@ -43,7 +43,7 @@ STM32_encoder::STM32_encoder(MicroControler_Type name, PinName slit_a, PinName s
     _encoder.IC2Selection = TIM_ICSELECTION_DIRECTTI;
 }
 
-void STM32_encoder::HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim, MicroControler_Type name, PinName slit_a, PinName slit_b)
+void STM32_encoder::HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim, PinName slit_a, PinName slit_b)
 {
     GPIO_InitTypeDef _GPIO_InitStruct;
 
