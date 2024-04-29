@@ -21,8 +21,8 @@ extern const TIM_Pin_Map tim_mappings[];
 
 class STM32_encoder{
     public:
-    STM32_encoder(PinName slit_a, PinName slit_b);
-    void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim, PinName slit_a, PinName slit_b);
+    STM32_encoder(MicroControler_Type name, PinName slit_a, PinName slit_b);
+    void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim, MicroControler_Type name, PinName slit_a, PinName slit_b);
     void start();
     void reset();
     int32_t get_count();
