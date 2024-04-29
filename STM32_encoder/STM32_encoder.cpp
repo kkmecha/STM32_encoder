@@ -76,7 +76,7 @@ void STM32_encoder::HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim, PinName sli
             return;
         }
     }
-    printf("GPIO pin map not found\r\n"); // STM32_encoderのpinmapの中で例外が起きた時の処理
+    #error("STM32_encoder's GPIO pinmap not found\r\n"); // STM32_encoderのpinmapの中で例外が起きた時の処理
 }
 
 void STM32_encoder::start(){
