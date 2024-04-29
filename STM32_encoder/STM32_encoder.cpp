@@ -16,7 +16,7 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     {TIM4, GPIOB, PB_6,  GPIO_PIN_6,  PB_7,  GPIO_PIN_7,  GPIO_AF2_TIM4},
     {TIM4, GPIOD, PD_12, GPIO_PIN_12, PD_13, GPIO_PIN_13, GPIO_AF2_TIM4},
     #elif
-    #error "STM32_encoder's pinmap not found\r\n"
+    #error "pinmap not found\r\n please see STM32_encoder.cpp\r\n"
     #endif
 };
 
