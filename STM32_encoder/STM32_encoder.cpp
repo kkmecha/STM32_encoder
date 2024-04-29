@@ -3,12 +3,12 @@
 
 // ライブラリが正常に動くようになり次第増やしていく
 const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
+    // TIM_TypeDef*, GPIO_TypeDef*, (PinName, uint16_t)x2, uint8_t    
     #ifdef TARGET_STM32F072RB
     #elif defined (TARGET_STM32F303K8)
     #elif defined (TARGET_STM32F401RE)
     #elif defined (TARGET_STM32F746ZG)
     #elif defined (TARGET_STM32F767ZI)
-    // TIM_TypeDef*, GPIO_TypeDef*, (PinName, uint16_t)x2, uint8_t
     {TIM3, GPIOA, PA_6,  GPIO_PIN_6,  PA_7,  GPIO_PIN_7,  GPIO_AF2_TIM3},
     {TIM3, GPIOB, PB_0,  GPIO_PIN_0,  PB_1,  GPIO_PIN_1,  GPIO_AF2_TIM3},
     {TIM3, GPIOB, PB_4,  GPIO_PIN_4,  PB_5,  GPIO_PIN_5,  GPIO_AF2_TIM3},
