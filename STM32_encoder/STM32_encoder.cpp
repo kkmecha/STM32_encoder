@@ -62,7 +62,7 @@ void STM32_encoder::HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim, PinName sli
     _GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     _GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
 
-    for(const TIM_Pin_Map& mapping : tim_mappings_f767zi){
+    for(const TIM_Pin_Map& mapping : tim_mappings){
         if(mapping.Pin_name.pin_a == slit_a && mapping.Pin_name.pin_b == slit_b){ // 引数で指定されたピンがTIM_Pin_Mapとあっているか確認
             _htim.Instance = mapping.tim_instance;
             if(mapping.tim_instance == TIM3){
