@@ -1,23 +1,24 @@
 #include "mbed.h"
 #include "STM32_encoder.h"
 
+#ifdef TARGET_STM32F072RB
 const TIM_Pin_Map tim_mappings_f072rb[] = { // 独自のpinmap
     // TIM_TypeDef*, GPIO_TypeDef*, (PinName, uint16_t)x2, uint8_t
     
 };
-
+#elif defined (TARGET_STM32F303K8)
 const TIM_Pin_Map tim_mappings_f303k8[] = {
     
 };
-
+#elif defined (TARGET_STM32F401RE)
 const TIM_Pin_Map tim_mappings_f401re[] = {
     
 };
-
+#elif defined (TARGET_STM32F746ZG)
 const TIM_Pin_Map tim_mappings_f746zg[] = {
     
 };
-
+#elif defined (TARGET_STM32F767ZI)
 const TIM_Pin_Map tim_mappings_f767zi[] = { 
     {TIM3, GPIOA, PA_6,  GPIO_PIN_6,  PA_7,  GPIO_PIN_7,  GPIO_AF2_TIM3},
     {TIM3, GPIOB, PB_0,  GPIO_PIN_0,  PB_1,  GPIO_PIN_1,  GPIO_AF2_TIM3},
@@ -26,7 +27,8 @@ const TIM_Pin_Map tim_mappings_f767zi[] = {
     {TIM4, GPIOB, PB_6,  GPIO_PIN_6,  PB_7,  GPIO_PIN_7,  GPIO_AF2_TIM4},
     {TIM4, GPIOD, PD_12, GPIO_PIN_12, PD_13, GPIO_PIN_13, GPIO_AF2_TIM4},
 };
-
+#else
+#error "This target is unsupported"
 STM32_encoder::STM32_encoder(PinName slit_a, PinName slit_b)
 {
     HAL_TIM_Encoder_MspInit(&_htim, slit_a, slit_b);
