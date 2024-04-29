@@ -29,6 +29,8 @@ const TIM_Pin_Map tim_mappings_f767zi[] = {
 };
 #else
 #error "This target is unsupported"
+#endif
+
 STM32_encoder::STM32_encoder(PinName slit_a, PinName slit_b)
 {
     HAL_TIM_Encoder_MspInit(&_htim, slit_a, slit_b);
