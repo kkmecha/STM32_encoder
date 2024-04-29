@@ -1,6 +1,7 @@
 # STM32_encoder  
 STM32_encoderのtest版(2つ目)  
 **Nucleo-F767ZIに対応**  
+pinmapの追加　重複した処理をなくした  
 これから使えるマイコンを増やしていきます  
   
 エラーのないエラー  
