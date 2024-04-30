@@ -1,4 +1,4 @@
-//                                  2^32 - 1
+はぁ//                                  2^32 - 1
 //         _bhitsの動き         ...4294967295 -> 0 ->    1   ...
 //   (_hbits << 16) | _count    ...-65536~-1  -> 0 -> 1~65536...
 #include "mbed.h"
@@ -98,8 +98,8 @@ int32_t  STM32_encoder::get_count(){
     static int _encoder_high_bits = 0;
     core_util_critical_section_enter();
     _count = _htim.Instance->CNT;
-    if((_htim.Instance->SR & (TIM_FLAG_UPDATE)) == TIM_FLAG_UPDATE){
-        _htim.Instance->SR = ~(TIM_IT_UPDATE);
+    if((_htim.Instance->SR & (TIM_FLAG_UPDATE)) == TIM_FLAG_UPDATE){ // 更新フラグがたったら
+        _htim.Instance->SR = ~(TIM_IT_UPDATE); // フラグをクリア
         if(_htim.Instance->CNT < 32768)
             _encoder_high_bits += 1;
         else
