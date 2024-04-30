@@ -26,9 +26,11 @@ class STM32_encoder{
     void start();
     void reset();
     int32_t get_count();
+
     private:
     TIM_HandleTypeDef _htim;
     TIM_Encoder_InitTypeDef _encoder;
+    PinName a, b;
 };
 
 #endif
