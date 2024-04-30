@@ -2,6 +2,7 @@
 #define __STM32_ENCODER__
 
 #include "mbed.h"
+#include <stdlib.h>
 
 typedef struct{
     PinName pin_a;
@@ -22,15 +23,16 @@ extern const TIM_Pin_Map tim_mappings[];
 class STM32_encoder{
     public:
     STM32_encoder(PinName slit_a, PinName slit_b);
-    void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim, PinName slit_a, PinName slit_b);
+    void GPIO_InitPeriph(PinName slit_a, PinName slit_b);
     void start();
     void reset();
     int32_t get_count();
 
     private:
-    TIM_HandleTypeDef _htim;
-    TIM_Encoder_InitTypeDef _encoder;
     PinName a, b;
+    TIM_HandleTypeDef _htim;
+    GPIO_InitTypeDef _GPIO_InitStruct;
+    TIM_Encoder_InitTypeDef _encoder;
 };
 
 #endif
