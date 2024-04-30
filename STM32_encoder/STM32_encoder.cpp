@@ -3,6 +3,7 @@
 //          _bhitsの動き         ...4294967295 -> 0 ->    1   ...
 //   (_hbits << 16) | _count    ...-65536~-1  -> 0 -> 1~65536...
 // TIMx->CNTがオーバーフローする度に_hbitsが増える
+// _hbitsは符号ビット兼角度の取得可能範囲を広げるため、、、かな？
 #include "mbed.h"
 #include "STM32_encoder.h"
 
