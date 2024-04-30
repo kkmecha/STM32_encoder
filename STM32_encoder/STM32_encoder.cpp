@@ -1,3 +1,6 @@
+//                                  2^32 - 1
+//         _bhitsの動き         ...4294967295 -> 0 ->    1   ...
+//   (_hbits << 16) | _count    ...-65536~-1  -> 0 -> 1~65536...
 #include "mbed.h"
 #include "STM32_encoder.h"
 
@@ -22,19 +25,11 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
 
 STM32_encoder::STM32_encoder(PinName slit_a, PinName slit_b) : a(slit_a), b(slit_b)
 {
-    HAL_TIM_Encoder_MspInit(&_htim, slit_a, slit_b);
-
-
+    GPIO_InitPeriph(slit_a, slit_b);
 }
-
-void STM32_encoder::HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim, PinName slit_a, PinName slit_b)
+ 
+void STM32_encoder::GPIO_InitPeriph(PinName slit_a, PinName slit_b)
 {
-    GPIO_InitTypeDef _GPIO_InitStruct;
-
-    _GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    _GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-    _GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-
     for(const TIM_Pin_Map& mapping : tim_mappings){ // 配列の全要素の走査
         if(mapping.Pin_name.pin_a == slit_a && mapping.Pin_name.pin_b == slit_b){ // 引数で指定されたピンがTIM_Pin_Mapとあっているか確認
             if(mapping.tim_instance == TIM3){
@@ -42,13 +37,26 @@ void STM32_encoder::HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim, PinName sli
             }else if(mapping.tim_instance == TIM4){
                 __TIM4_CLK_ENABLE();
             }
+
+            if(mapping.gpio_port == GPIOA){
+                __GPIOA_CLK_ENABLE();
+            }else if(mapping.gpio_port == GPIOB){
+                __GPIOB_CLK_ENABLE();
+            }else if(mapping.gpio_port == GPIOC){
+                __GPIOC_CLK_ENABLE();
+            }else if(mapping.gpio_port == GPIOD){
+                __GPIOD_CLK_ENABLE();
+            }
+
+            _GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+            _GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+            _GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
             _GPIO_InitStruct.Pin = mapping.Pin_name.pin_a_selected | mapping.Pin_name.pin_b_selected;
             _GPIO_InitStruct.Alternate = mapping.pin_alternate;
             HAL_GPIO_Init(mapping.gpio_port, &_GPIO_InitStruct);
             return;
         }
     }
-    printf("GPIO pin map not found\r\n"); // STM32_encoderのpinmapの中で例外が起きた時の処理
 }
 
 void STM32_encoder::start(){
@@ -90,16 +98,17 @@ int32_t  STM32_encoder::get_count(){
     static int _encoder_high_bits = 0;
     core_util_critical_section_enter();
     _count = _htim.Instance->CNT;
-    if ((_htim.Instance->SR & TIM_FLAG_UPDATE) == TIM_FLAG_UPDATE) {
+    if((_htim.Instance->SR & (TIM_FLAG_UPDATE)) == TIM_FLAG_UPDATE){
         _htim.Instance->SR = ~(TIM_IT_UPDATE);
-        if (_htim.Instance->CNT < 32768) {
+        if(_htim.Instance->CNT < 32768)
             _encoder_high_bits += 1;
-        } else {
+        else
             _encoder_high_bits -= 1;
-        }
         _count = _htim.Instance->CNT;
     }
     _hbits = _encoder_high_bits;
     core_util_critical_section_exit();
-    return (_hbits << 16) | _count;
+    printf("count:%lu, hbits:%lu, (_hbits << 16) | _count:%ld\r\n", _count, _hbits, (_hbits << 16) | _count);
+    ThisThread::sleep_for(5ms);
+    // return (_hbits << 16) | _count;
 }
