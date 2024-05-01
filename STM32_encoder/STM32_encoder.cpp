@@ -1,21 +1,18 @@
-//                             (本来は-1になるはず)
 //                                  2^32 - 1
-//          _bhitsの動き         ...4294967295 -> 0 ->    1   ...
+//         _bhitsの動き         ...4294967295 -> 0 ->    1   ...
 //   (_hbits << 16) | _count    ...-65536~-1  -> 0 -> 1~65536...
-// TIMx->CNTがオーバーフローする度に_hbitsが増える
-// _hbitsは符号ビット兼角度の取得可能範囲を広げるため、、、かな？
-
 #include "mbed.h"
 #include "STM32_encoder.h"
 
+// これはAMT102(4逓倍のエンコーダー)のライブラリです
 // ライブラリが正常に動くようになり次第増やしていく
 const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
+    // TIM_TypeDef*, GPIO_TypeDef*, (PinName, uint16_t)x2, uint8_t
     #ifdef TARGET_STM32F072RB
     #elif defined (TARGET_STM32F303K8)
     #elif defined (TARGET_STM32F401RE)
     #elif defined (TARGET_STM32F746ZG)
     #elif defined (TARGET_STM32F767ZI)
-    // TIM_TypeDef*, GPIO_TypeDef*, (PinName, uint16_t)x2, uint8_t
     {TIM3, GPIOA, PA_6,  GPIO_PIN_6,  PA_7,  GPIO_PIN_7,  GPIO_AF2_TIM3},
     {TIM3, GPIOB, PB_0,  GPIO_PIN_0,  PB_1,  GPIO_PIN_1,  GPIO_AF2_TIM3},
     {TIM3, GPIOB, PB_4,  GPIO_PIN_4,  PB_5,  GPIO_PIN_5,  GPIO_AF2_TIM3},
@@ -27,7 +24,7 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     #endif
 };
 
-STM32_encoder::STM32_encoder(PinName slit_a, PinName slit_b) : a(slit_a), b(slit_b)
+STM32_encoder::STM32_encoder(PinName slit_a, PinName slit_b, int resolution = 200, int times = 4) : _a(slit_a), _b(slit_b), _resolution(resolution), _times(times)
 {
     GPIO_InitPeriph(slit_a, slit_b);
 }
@@ -66,7 +63,7 @@ void STM32_encoder::GPIO_InitPeriph(PinName slit_a, PinName slit_b)
 void STM32_encoder::start(){
     // timer
     for(const TIM_Pin_Map& mapping : tim_mappings){
-        if(mapping.Pin_name.pin_a == a && mapping.Pin_name.pin_b == b){
+        if(mapping.Pin_name.pin_a == _a && mapping.Pin_name.pin_b == _b){
             _htim.Instance = mapping.tim_instance;
         }
     }
@@ -79,7 +76,7 @@ void STM32_encoder::start(){
     _encoder.EncoderMode = TIM_ENCODERMODE_TI12;
     _encoder.IC1Filter = 0x0f;
     _encoder.IC1Polarity = TIM_INPUTCHANNELPOLARITY_RISING; 
-    _encoder.IC1Prescaler = TIM_ICPSC_DIV4;
+    _encoder.IC1Prescaler = TIM_ICPSC_DIV4; 
     _encoder.IC1Selection = TIM_ICSELECTION_DIRECTTI;
  
     _encoder.IC2Filter = 0x0f;
@@ -98,12 +95,12 @@ void STM32_encoder::reset(){
 }
 
 int32_t  STM32_encoder::get_count(){
-    int32_t _count, _hbits;
+    int32_t _count, _hbits, _angle;
     static int _encoder_high_bits = 0;
     core_util_critical_section_enter();
     _count = _htim.Instance->CNT;
-    if((_htim.Instance->SR & (TIM_FLAG_UPDATE)) == TIM_FLAG_UPDATE){ // 更新フラグがたったら
-        _htim.Instance->SR = ~(TIM_IT_UPDATE); // フラグをクリア
+    if((_htim.Instance->SR & (TIM_FLAG_UPDATE)) == TIM_FLAG_UPDATE){
+        _htim.Instance->SR = ~(TIM_IT_UPDATE);
         if(_htim.Instance->CNT < 32768)
             _encoder_high_bits += 1;
         else
@@ -111,8 +108,9 @@ int32_t  STM32_encoder::get_count(){
         _count = _htim.Instance->CNT;
     }
     _hbits = _encoder_high_bits;
+    _angle = int32_t(((_hbits << 16) | _count) / float(_resolution * _times / 360.0)); // 発生したパルス数 / 1°あたりのパルス数  (発生したパルス数を度数法に変換)
     core_util_critical_section_exit();
-    printf("count:%lu, hbits:%lu, (_hbits << 16) | _count:%ld\r\n", _count, _hbits, (_hbits << 16) | _count);
-    ThisThread::sleep_for(5ms);
-    // return (_hbits << 16) | _count;
+    //printf("count:%lu, hbits:%lu, (_hbits << 16) | _count:%ld\r\n", _count, _hbits, (_hbits << 16) | _count);
+    //ThisThread::sleep_for(5ms);
+    return _angle;
 }
