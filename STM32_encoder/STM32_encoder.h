@@ -29,7 +29,7 @@ class STM32_encoder{
     private:
     PinName _a, _b;
     int _resolution = 200, _times = 4; // 分解能, 何逓倍か
-    void 
+    void _GPIO_InitPeriph(PinName slit_a, PinName slit_b)
     TIM_HandleTypeDef _htim;
     GPIO_InitTypeDef _GPIO_InitStruct;
     TIM_Encoder_InitTypeDef _encoder;
