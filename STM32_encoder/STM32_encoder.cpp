@@ -60,7 +60,7 @@ void STM32_encoder::GPIO_InitPeriph(PinName slit_a, PinName slit_b)
     }
 }
 
-void STM32_encoder::start(){
+void STM32_encoder::encoder_start(){
     // timer
     for(const TIM_Pin_Map& mapping : tim_mappings){
         if(mapping.Pin_name.pin_a == _a && mapping.Pin_name.pin_b == _b){
@@ -88,13 +88,13 @@ void STM32_encoder::start(){
     HAL_TIM_Encoder_Start(&_htim,TIM_CHANNEL_ALL);
 }
 
-void STM32_encoder::reset(){
+void STM32_encoder::encoder_reset(){
     core_util_critical_section_enter();
     __HAL_TIM_CLEAR_FLAG(&_htim, TIM_IT_UPDATE);
     core_util_critical_section_exit();
 }
 
-int32_t  STM32_encoder::get_count(){
+int32_t  STM32_encoder::encoder_get_count(){
     int32_t _count, _hbits, _angle;
     static int _encoder_high_bits = 0;
     core_util_critical_section_enter();
