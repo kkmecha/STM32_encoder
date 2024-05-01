@@ -2,7 +2,6 @@
 #define __STM32_ENCODER__
 
 #include "mbed.h"
-#include <stdlib.h>
 
 typedef struct{
     PinName pin_a;
