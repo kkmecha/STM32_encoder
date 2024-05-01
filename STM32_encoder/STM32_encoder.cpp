@@ -23,7 +23,8 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     #endif
 };
 
-STM32_encoder::STM32_encoder(PinName slit_a, PinName slit_b, int resolution = 200, int times = 4) : _a(slit_a), _b(slit_b), _resolution(resolution), _times(times)
+STM32_encoder::STM32_encoder(PinName slit_a, PinName slit_b, int resolution = 200, int times = 4)
+ : _a(slit_a), _b(slit_b), _resolution(resolution), _times(times)
 {
     GPIO_InitPeriph(slit_a, slit_b);
 }
