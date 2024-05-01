@@ -26,10 +26,10 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
 STM32_encoder::STM32_encoder(PinName slit_a, PinName slit_b, int resolution = 200, int times = 4)
  : _a(slit_a), _b(slit_b), _resolution(resolution), _times(times)
 {
-    GPIO_InitPeriph(slit_a, slit_b);
+    _GPIO_InitPeriph(slit_a, slit_b);
 }
  
-void STM32_encoder::GPIO_InitPeriph(PinName slit_a, PinName slit_b)
+void STM32_encoder::_GPIO_InitPeriph(PinName slit_a, PinName slit_b)
 {
     for(const TIM_Pin_Map& mapping : tim_mappings){ // 配列の全要素の走査
         if(mapping.Pin_name.pin_a == slit_a && mapping.Pin_name.pin_b == slit_b){ // 引数で指定されたピンがTIM_Pin_Mapとあっているか確認
