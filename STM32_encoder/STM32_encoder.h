@@ -22,14 +22,15 @@ extern const TIM_Pin_Map tim_mappings[];
 
 class STM32_encoder{
     public:
-    STM32_encoder(PinName slit_a, PinName slit_b);
+    STM32_encoder(PinName slit_a, PinName slit_b, int resolution, int times);
     void GPIO_InitPeriph(PinName slit_a, PinName slit_b);
     void start();
     void reset();
     int32_t get_count();
 
     private:
-    PinName a, b;
+    PinName _a, _b;
+    int _resolution = 200, _times = 4; // 分解能, 何逓倍か
     TIM_HandleTypeDef _htim;
     GPIO_InitTypeDef _GPIO_InitStruct;
     TIM_Encoder_InitTypeDef _encoder;
