@@ -1,6 +1,7 @@
 # STM32_encoder  
 STM32_encoderのtest版(2つ目)  
 **Nucleo-F767ZIに対応**  
+AMT102のリンク https://www.cuidevices.com/product/resource/amt10.pdf
 pinmapの追加　重複した処理をなくした  
 分解能と逓倍を指定できるようにした  
 これから使えるマイコンを増やしていきます  
