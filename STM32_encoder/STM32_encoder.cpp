@@ -9,12 +9,32 @@
 const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     // TIM_TypeDef*, GPIO_TypeDef*, (PinName, uint16_t)x2, uint8_t
     #ifdef TARGET_STM32F072RB
+    // TIM2...32bit TIM3...16bit
+    // Max Interface clock..48, Man timer clock...48
+    //16bit
+    {TIM3, GPIOA, PA_6,  GPIO_PIN_6,  PA_7,  GPIO_PIN_7,  GPIO_AF1_TIM3},
+    {TIM3, GPIOB, PB_4,  GPIO_PIN_4,  PB_5,  GPIO_PIN_5,  GPIO_AF1_TIM3},
+    {TIM3, GPIOC, PC_6,  GPIO_PIN_6,  PC_7,  GPIO_PIN_7,  GPIO_AF0_TIM3},
+    {TIM3, GPIOE, PE_3,  GPIO_PIN_3,  PE_4,  GPIO_PIN_4,  GPIO_AF0_TIM3},
+
+    // 32bit
+    {TIM2, GPIOA, PA_0, GPIO_PIN_0, PA_1, GPIO_PIN_1, GPIO_AF2_TIM2},
+    {TIM2, GPIOA, PA_5, GPIO_PIN_5, PA_1, GPIO_PIN_1, GPIO_AF2_TIM2},
+    {TIM2, GPIOA, PA_15, GPIO_PIN_15, PA_1, GPIO_PIN_1, GPIO_AF1_TIM2},
+
     #elif defined (TARGET_STM32F303K8)
     // TIM2...32bit TIM3...16bit
     // Max Interface clock..72, Man timer clock...72
     //16bit
-    
+    {TIM3, GPIOA, PA_6,  GPIO_PIN_6,  PA_4,  GPIO_PIN_4,  GPIO_AF2_TIM3},
+    {TIM3, GPIOA, PA_6,  GPIO_PIN_6,  PA_7,  GPIO_PIN_7,  GPIO_AF2_TIM3},
+    {TIM3, GPIOB, PB_4,  GPIO_PIN_4,  PB_5,  GPIO_PIN_5,  GPIO_AF2_TIM3},
+    {TIM3, GPIOC, PC_6,  GPIO_PIN_6,  PC_7,  GPIO_PIN_7,  GPIO_AF2_TIM3},
 
+    // 32bit
+    {TIM2, GPIOA, PA_0, GPIO_PIN_0, PA_1, GPIO_PIN_1, GPIO_AF1_TIM2},
+    {TIM2, GPIOA, PA_5, GPIO_PIN_5, PA_1, GPIO_PIN_1, GPIO_AF1_TIM2},
+    {TIM2, GPIOA, PA_15, GPIO_PIN_15, PA_1, GPIO_PIN_1, GPIO_AF1_TIM2},
 
     #elif defined (TARGET_STM32F401RE)
     // TIM2, TIM5...32bit TIM3, TIM4...16bit
