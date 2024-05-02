@@ -6,9 +6,19 @@
 
 // これはAMT102(4逓倍のエンコーダー)のライブラリです
 // ライブラリが正常に動くようになり次第増やしていく
+
+// F7xx系だと使える
+// F072RBでOSエラー吐かれた
+// F303K8は使えるやつが余ってなくて検証できなかった
+// F401REは生きてる実機がなくて検証できなかった
+
+// 追加したTIMに対応したプログラムの実装
+// OSエラーの原因の解明と改善(F072RBのみ)
+// もっとエンコーダーを使えるような方法がないか調べる
+
 const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     // TIM_TypeDef*, GPIO_TypeDef*, (PinName, uint16_t)x2, uint8_t
-    #ifdef TARGET_STM32F072RB
+    #ifdef TARGET_STM32F072RB // OSエラー吐いた
     // TIM2...32bit TIM3...16bit
     // Max Interface clock..48, Man timer clock...48
     //16bit
@@ -22,7 +32,7 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     {TIM2, GPIOA, PA_5, GPIO_PIN_5, PA_1, GPIO_PIN_1, GPIO_AF2_TIM2},
     {TIM2, GPIOA, PA_15, GPIO_PIN_15, PA_1, GPIO_PIN_1, GPIO_AF1_TIM2},
 
-    #elif defined (TARGET_STM32F303K8)
+    #elif defined (TARGET_STM32F303K8) // 確認できなかった
     // TIM2...32bit TIM3...16bit
     // Max Interface clock..72, Man timer clock...72
     //16bit
@@ -36,7 +46,7 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     {TIM2, GPIOA, PA_5, GPIO_PIN_5, PA_1, GPIO_PIN_1, GPIO_AF1_TIM2},
     {TIM2, GPIOA, PA_15, GPIO_PIN_15, PA_1, GPIO_PIN_1, GPIO_AF1_TIM2},
 
-    #elif defined (TARGET_STM32F401RE)
+    #elif defined (TARGET_STM32F401RE) // 確認できなかった
     // TIM2, TIM5...32bit TIM3, TIM4...16bit
     // Max Interface clock..42, Man timer clock...84
     // 16bit
@@ -71,21 +81,30 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     {TIM5, GPIOA, PA_0, GPIO_PIN_0, PA_1, GPIO_PIN_1, GPIO_AF2_TIM5},
     // {TIM5, GPIOH, PH_10, GPIO_PIN_10, PH_11, GPIO_PIN_11, GPIO_AF2_TIM5}, データシート上にはあるがPH_10などはない
     #elif defined (TARGET_STM32F767ZI)
-    // TIM2, TIM5...32bit TIM3, TIM4...16bit
-    // Max Interface clock..54, Man timer clock...216
+    // TIM2, TIM5...32bit TIM1, TIM3, TIM4, TIM8...16bit 
+    // Max Interface clock..54, Man timer clock...216 (TIM1とTIM8は108, 216)
     // 16bit
+    {TIM1, GPIOA, PA_8,  GPIO_PIN_8,  PA_9,  GPIO_PIN_9,  GPIO_AF1_TIM1},
+    {TIM1, GPIOA, PA_15,  GPIO_PIN_15,  PA_9,  GPIO_PIN_9,  GPIO_AF1_TIM1},
+    {TIM1, GPIOA, PE_9,  GPIO_PIN_9,  PE_11,  GPIO_PIN_11,  GPIO_AF1_TIM1},
+
     {TIM3, GPIOA, PA_6,  GPIO_PIN_6,  PA_7,  GPIO_PIN_7,  GPIO_AF2_TIM3},
     {TIM3, GPIOB, PB_0,  GPIO_PIN_0,  PB_1,  GPIO_PIN_1,  GPIO_AF2_TIM3},
     {TIM3, GPIOB, PB_4,  GPIO_PIN_4,  PB_5,  GPIO_PIN_5,  GPIO_AF2_TIM3},
     {TIM3, GPIOC, PC_6,  GPIO_PIN_6,  PC_7,  GPIO_PIN_7,  GPIO_AF2_TIM3},
+
     {TIM4, GPIOB, PB_6,  GPIO_PIN_6,  PB_7,  GPIO_PIN_7,  GPIO_AF2_TIM4},
     {TIM4, GPIOD, PD_12, GPIO_PIN_12, PD_13, GPIO_PIN_13, GPIO_AF2_TIM4},
 
+    {TIM8, GPIOC, PC_6,  GPIO_PIN_6,  PC_7,  GPIO_PIN_7,  GPIO_AF3_TIM8},
+    // {TIM8, GPIOC, PI_5,  GPIO_PIN_5,  PI_6,  GPIO_PIN_6,  GPIO_AF3_TIM8}, データシート上にはあるがPI_5などはない
+
     // 32bit
-    {TIM2, GPIOA, PA_0, GPIO_PIN_0, PA_1, GPIO_PIN_1, GPIO_AF1_TIM2},
-    {TIM2, GPIOA, PA_5, GPIO_PIN_5, PA_1, GPIO_PIN_1, GPIO_AF1_TIM2},
-    {TIM2, GPIOA, PA_15, GPIO_PIN_15, PA_1, GPIO_PIN_1, GPIO_AF1_TIM2},
-    {TIM5, GPIOA, PA_0, GPIO_PIN_0, PA_1, GPIO_PIN_1, GPIO_AF2_TIM5},
+    {TIM2, GPIOA, PA_0, GPIO_PIN_0, PA_1, GPIO_PIN_1, GPIO_AF1_TIM2},    //
+    {TIM2, GPIOA, PA_5, GPIO_PIN_5, PA_1, GPIO_PIN_1, GPIO_AF1_TIM2},    // PA_1が見当たらない
+    {TIM2, GPIOA, PA_15, GPIO_PIN_15, PA_1, GPIO_PIN_1, GPIO_AF1_TIM2},  //
+
+    {TIM5, GPIOA, PA_0, GPIO_PIN_0, PA_1, GPIO_PIN_1, GPIO_AF2_TIM5}, 
     // {TIM5, GPIOH, PH_10, GPIO_PIN_10, PH_11, GPIO_PIN_11, GPIO_AF2_TIM5}, データシート上にはあるがPH_10などはない
     #elif
     #error "STM32_encoder's pinmap not found\r\n"
@@ -101,10 +120,14 @@ void STM32_encoder::GPIO_InitPeriph(PinName slit_a, PinName slit_b)
 {
     for(const TIM_Pin_Map& mapping : tim_mappings){ // 配列の全要素の走査
         if(mapping.Pin_name.pin_a == slit_a && mapping.Pin_name.pin_b == slit_b){ // 引数で指定されたピンがTIM_Pin_Mapとあっているか確認
-            if(mapping.tim_instance == TIM3){
+            if(mapping.tim_instance == TIM2){
+                __TIM2_CLK_ENABLE();
+            }else if(mapping.tim_instance == TIM3){
                 __TIM3_CLK_ENABLE();
             }else if(mapping.tim_instance == TIM4){
                 __TIM4_CLK_ENABLE();
+            }else if(mapping.tim_instance == TIM5){
+                __TIM5_CLK_ENABLE();
             }
 
             if(mapping.gpio_port == GPIOA){
@@ -115,6 +138,10 @@ void STM32_encoder::GPIO_InitPeriph(PinName slit_a, PinName slit_b)
                 __GPIOC_CLK_ENABLE();
             }else if(mapping.gpio_port == GPIOD){
                 __GPIOD_CLK_ENABLE();
+            }else if(mapping.gpio_port == GPIOE){
+                __GPIOE_CLK_ENABLE();
+            }else if(mapping.gpio_port == GPIOH){
+                __GPIOH_CLK_ENABLE();
             }
 
             _GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
