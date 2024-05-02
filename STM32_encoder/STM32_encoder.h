@@ -30,6 +30,7 @@ class STM32_encoder{
     private:
     PinName _a, _b;
     int _resolution = 200, _times = 4; // 分解能, 何逓倍か
+    uint32_t register_max;
     int32_t _hbits = 0;
     TIM_HandleTypeDef _htim;
     GPIO_InitTypeDef _GPIO_InitStruct;
