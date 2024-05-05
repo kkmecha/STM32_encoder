@@ -1,6 +1,7 @@
 #include "mbed.h"
 #include "STM32_encoder.h"
 
+// TIM1とTIM8はGeneralじゃない
 // F7xx系だと使える
 // F072RBでOSエラー吐かれた
 // F303K8は使えるやつが余ってなくて検証できなかった
