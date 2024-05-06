@@ -121,15 +121,16 @@ int STM32_encoder::GPIO_InitPeriph(PinName slit_a, PinName slit_b)
 {
     for(const TIM_Pin_Map& mapping : tim_mappings){ // 配列の全要素の走査
         if(mapping.Pin_name.pin_a == slit_a && mapping.Pin_name.pin_b == slit_b){ // 引数で指定されたピンがTIM_Pin_Mapとあっているか確認
+            // ここの部分を各マイコンに対応させる
             if(mapping.tim_instance == TIM2){
                 __TIM2_CLK_ENABLE();
             }else if(mapping.tim_instance == TIM3){
                 __TIM3_CLK_ENABLE();
-            }/*else if(mapping.tim_instance == TIM4){
+            }else if(mapping.tim_instance == TIM4){
                 __TIM4_CLK_ENABLE();
             }else if(mapping.tim_instance == TIM5){
                 __TIM5_CLK_ENABLE();
-            }*/
+            }
             if(mapping.gpio_port == GPIOA){
                 __GPIOA_CLK_ENABLE();
             }else if(mapping.gpio_port == GPIOB){
@@ -140,9 +141,10 @@ int STM32_encoder::GPIO_InitPeriph(PinName slit_a, PinName slit_b)
                 __GPIOD_CLK_ENABLE();
             }else if(mapping.gpio_port == GPIOE){
                 __GPIOE_CLK_ENABLE();
-            }/*else if(mapping.gpio_port == GPIOH){
+            }else if(mapping.gpio_port == GPIOH){
                 __GPIOH_CLK_ENABLE();
-            }*/
+            }
+            // ここまで
 
             _GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
             _GPIO_InitStruct.Pull = GPIO_PULLDOWN; // デフォルト...プルダウン
@@ -159,9 +161,9 @@ void STM32_encoder::start(){
     for(const TIM_Pin_Map& mapping : tim_mappings){
         if(mapping.Pin_name.pin_a == _a && mapping.Pin_name.pin_b == _b){
             _htim.Instance = mapping.tim_instance;
+            _htim.Init.Period = tim_mappings->tim_max; // TIMx->CNT(パルスカウンタ)の最大値の設定
         }
     }
-    _htim.Init.Period = tim_mappings->tim_max; // TIMx->CNT(パルスカウンタ)の最大値の設定
     _htim.Init.Prescaler = 0;
     _htim.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1; // クロックの何分の一でカウントの計算をするか
     _htim.Init.CounterMode = TIM_COUNTERMODE_UP;
