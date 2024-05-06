@@ -12,6 +12,7 @@ typedef struct{
 
 typedef struct{
     TIM_TypeDef* tim_instance;
+    uint32_t tim_max;
     GPIO_TypeDef* gpio_port;
     Pin_Pointer Pin_name;
     uint8_t pin_alternate;
@@ -22,7 +23,7 @@ extern const TIM_Pin_Map tim_mappings[];
 class STM32_encoder{
     public:
     STM32_encoder(PinName slit_a, PinName slit_b, int resolution, int times);
-    void GPIO_InitPeriph(PinName slit_a, PinName slit_b);
+    int GPIO_InitPeriph(PinName slit_a, PinName slit_b);
     void start();
     void reset();
     int32_t get_count();
@@ -30,7 +31,6 @@ class STM32_encoder{
     private:
     PinName _a, _b;
     int _resolution = 200, _times = 4; // 分解能, 何逓倍か
-    uint32_t register_max;
     int32_t _hbits = 0;
     TIM_HandleTypeDef _htim;
     GPIO_InitTypeDef _GPIO_InitStruct;
