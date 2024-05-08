@@ -8,7 +8,7 @@
 // ライブラリが正常に動くようになり次第増やしていく
 
 // F7xx系だと使える
-// F072RBでOSエラー吐かれた
+// F072RBでOSエラー吐かれた -> 解消
 // F303K8は使えるやつが余ってなくて検証できなかった
 // F401REは生きてる実機がなくて検証できなかった
 
@@ -18,7 +18,7 @@
 
 const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     // TIM_TypeDef*, GPIO_TypeDef*, (PinName, uint16_t)x2, uint8_t
-    #ifdef TARGET_NUCLEO_F072RB // OSエラー吐いた
+    #ifdef TARGET_NUCLEO_F072RB // OSエラー吐いた -> 解消 正常に動作 ok
     // TIM2...32bit TIM3...16bit
     // Max Interface clock..48, Man timer clock...48
 
@@ -43,7 +43,7 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     {TIM3,  0xffff,  GPIOA,  {PA_6,  GPIO_PIN_6,  PA_4,  GPIO_PIN_4},  GPIO_AF2_TIM3},
     {TIM3,  0xffff,  GPIOA,  {PA_6,  GPIO_PIN_6,  PA_7,  GPIO_PIN_7},  GPIO_AF2_TIM3},
     {TIM3,  0xffff,  GPIOB,  {PB_4,  GPIO_PIN_4,  PB_5,  GPIO_PIN_5},  GPIO_AF2_TIM3},
-    {TIM3,  0xffff,  GPIOC,  {PC_6,  GPIO_PIN_6,  PC_7,  GPIO_PIN_7},  GPIO_AF2_TIM3},
+    //{TIM3,  0xffff,  GPIOC,  {PC_6,  GPIO_PIN_6,  PC_7,  GPIO_PIN_7},  GPIO_AF2_TIM3},
 
     {TIM2,  0xffffffff,  GPIOA,  {PA_0,  GPIO_PIN_0,  PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
     {TIM2,  0xffffffff,  GPIOA,  {PA_5,  GPIO_PIN_5,  PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
@@ -56,6 +56,7 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     {TIM3,  0xffff,  GPIOA,  {PA_6,  GPIO_PIN_6,  PA_7,  GPIO_PIN_7},  GPIO_AF2_TIM3},
     {TIM3,  0xffff,  GPIOB,  {PB_4,  GPIO_PIN_4,  PB_5,  GPIO_PIN_5},  GPIO_AF2_TIM3},
     {TIM3,  0xffff,  GPIOC,  {PC_6,  GPIO_PIN_6,  PC_7,  GPIO_PIN_7},  GPIO_AF2_TIM3},
+
     {TIM4,  0xffff,  GPIOB,  {PB_6,  GPIO_PIN_6,  PB_7,  GPIO_PIN_7},  GPIO_AF2_TIM4},
     {TIM4,  0xffff,  GPIOD,  {PD_12, GPIO_PIN_12, PD_13, GPIO_PIN_13}, GPIO_AF2_TIM4},
 
@@ -63,17 +64,19 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     {TIM2,  0xffffffff,  GPIOA,  {PA_0,  GPIO_PIN_0,  PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
     {TIM2,  0xffffffff,  GPIOA,  {PA_5,  GPIO_PIN_5,  PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
     {TIM2,  0xffffffff,  GPIOA,  {PA_15, GPIO_PIN_15, PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
+
     {TIM5,  0xffffffff,  GPIOA,  {PA_0,  GPIO_PIN_0,  PA_1,  GPIO_PIN_1},  GPIO_AF2_TIM5},
     // {TIM5,  0xffffffff,  GPIOH, PH_10, GPIO_PIN_10, PH_11, GPIO_PIN_11, GPIO_AF2_TIM5}, データシート上にはあるがPH_10などはない
 
 
-    #elif defined (TARGET_NUCLEO_F746ZG)
+    #elif defined (TARGET_NUCLEO_F746ZG) // ok
     // TIM2, TIM5...32bit TIM3, TIM4...16bit
     // Max Interface clock..54, Man timer clock...216
     // 16bit
     {TIM3,  0xffff,  GPIOA,  {PA_6,  GPIO_PIN_6,  PA_7,  GPIO_PIN_7},  GPIO_AF2_TIM3},
     {TIM3,  0xffff,  GPIOB,  {PB_4,  GPIO_PIN_4,  PB_5,  GPIO_PIN_5},  GPIO_AF2_TIM3},
     {TIM3,  0xffff,  GPIOC,  {PC_6,  GPIO_PIN_6,  PC_7,  GPIO_PIN_7},  GPIO_AF2_TIM3},
+
     {TIM4,  0xffff,  GPIOB,  {PB_6,  GPIO_PIN_6,  PB_7,  GPIO_PIN_7},  GPIO_AF2_TIM4},
     {TIM4,  0xffff,  GPIOD,  {PD_12, GPIO_PIN_12, PD_13, GPIO_PIN_13}, GPIO_AF2_TIM4}, 
 
@@ -81,9 +84,10 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     {TIM2,  0xffffffff,  GPIOA,  {PA_0,  GPIO_PIN_0,  PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
     {TIM2,  0xffffffff,  GPIOA,  {PA_5,  GPIO_PIN_5,  PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
     {TIM2,  0xffffffff,  GPIOA,  {PA_15, GPIO_PIN_15, PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
+
     {TIM5,  0xffffffff,  GPIOA,  {PA_0,  GPIO_PIN_0,  PA_1,  GPIO_PIN_1},  GPIO_AF2_TIM5},
     // {TIM5,  0xffffffff,  GPIOH, PH_10, GPIO_PIN_10, PH_11, GPIO_PIN_11, GPIO_AF2_TIM5}, データシート上にはあるがPH_10などはない
-    #elif defined (TARGET_NUCLEO_F767ZI)
+    #elif defined (TARGET_NUCLEO_F767ZI) // ok
     // TIM2, TIM5...32bit TIM1, TIM3, TIM4, TIM8...16bit 
     // Max Interface clock..54, Man timer clock...216 (TIM1とTIM8は108, 216)
     // 16bit
@@ -117,20 +121,20 @@ STM32_encoder::STM32_encoder(PinName slit_a, PinName slit_b, int resolution = 20
     GPIO_InitPeriph(slit_a, slit_b);
 }
  
-int STM32_encoder::GPIO_InitPeriph(PinName slit_a, PinName slit_b)
+void STM32_encoder::GPIO_InitPeriph(PinName slit_a, PinName slit_b)
 {
     for(const TIM_Pin_Map& mapping : tim_mappings){ // 配列の全要素の走査
         if(mapping.Pin_name.pin_a == slit_a && mapping.Pin_name.pin_b == slit_b){ // 引数で指定されたピンがTIM_Pin_Mapとあっているか確認
-            // ここの部分を各マイコンに対応させる
             if(mapping.tim_instance == TIM2){
                 __TIM2_CLK_ENABLE();
             }else if(mapping.tim_instance == TIM3){
                 __TIM3_CLK_ENABLE();
-            }else if(mapping.tim_instance == TIM4){
+            }/*else if(mapping.tim_instance == TIM4){ // f072rb f303k8 x
                 __TIM4_CLK_ENABLE();
-            }else if(mapping.tim_instance == TIM5){
+            }else if(mapping.tim_instance == TIM5){ // f072rb f303k8 x
                 __TIM5_CLK_ENABLE();
-            }
+            }*/
+
             if(mapping.gpio_port == GPIOA){
                 __GPIOA_CLK_ENABLE();
             }else if(mapping.gpio_port == GPIOB){
@@ -139,12 +143,11 @@ int STM32_encoder::GPIO_InitPeriph(PinName slit_a, PinName slit_b)
                 __GPIOC_CLK_ENABLE();
             }else if(mapping.gpio_port == GPIOD){
                 __GPIOD_CLK_ENABLE();
-            }else if(mapping.gpio_port == GPIOE){
+            }/*else if(mapping.gpio_port == GPIOE){ // f303k8 x
                 __GPIOE_CLK_ENABLE();
-            }else if(mapping.gpio_port == GPIOH){
+            }else if(mapping.gpio_port == GPIOH){ // f072rb f303k8 x
                 __GPIOH_CLK_ENABLE();
-            }
-            // ここまで
+            }*/
 
             _GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
             _GPIO_InitStruct.Pull = GPIO_PULLDOWN; // デフォルト...プルダウン
@@ -161,9 +164,9 @@ void STM32_encoder::start(){
     for(const TIM_Pin_Map& mapping : tim_mappings){
         if(mapping.Pin_name.pin_a == _a && mapping.Pin_name.pin_b == _b){
             _htim.Instance = mapping.tim_instance;
-            _htim.Init.Period = tim_mappings->tim_max; // TIMx->CNT(パルスカウンタ)の最大値の設定
         }
     }
+    _htim.Init.Period = tim_mappings->tim_max; // TIMx->CNT(パルスカウンタ)の最大値の設定
     _htim.Init.Prescaler = 0;
     _htim.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1; // クロックの何分の一でカウントの計算をするか
     _htim.Init.CounterMode = TIM_COUNTERMODE_UP;
