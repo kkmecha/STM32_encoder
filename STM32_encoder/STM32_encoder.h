@@ -23,7 +23,7 @@ extern const TIM_Pin_Map tim_mappings[];
 class STM32_encoder{
     public:
     STM32_encoder(PinName slit_a, PinName slit_b, int resolution, int times);
-    int GPIO_InitPeriph(PinName slit_a, PinName slit_b);
+    void GPIO_InitPeriph(PinName slit_a, PinName slit_b);
     void start();
     void reset();
     int32_t get_count();
