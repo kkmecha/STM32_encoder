@@ -62,8 +62,8 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     {TIM2,  0xffffffff,  GPIOA,  {PA_5,  GPIO_PIN_5,  PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
     {TIM2,  0xffffffff,  GPIOA,  {PA_15, GPIO_PIN_15, PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
 
-    {TIM5,  0xffffffff,  GPIOA,  {PA_0,  GPIO_PIN_0,  PA_1,  GPIO_PIN_1},  GPIO_AF2_TIM5},
-    // {TIM5,  0xffffffff,  GPIOH, PH_10, GPIO_PIN_10, PH_11, GPIO_PIN_11, GPIO_AF2_TIM5}, データシート上にはあるがPH_10などはない
+    // {TIM5,  0xffffffff,  GPIOA,  {PA_0,  GPIO_PIN_0,  PA_1,  GPIO_PIN_1},  GPIO_AF2_TIM5},
+    // {TIM5,  0xffffffff,  GPIOH,  {PH_10, GPIO_PIN_10, PH_11, GPIO_PIN_11}, GPIO_AF2_TIM5}, データシート上にはあるがPH_10などはない
 
 
     #elif defined (TARGET_NUCLEO_F746ZG) // ok
@@ -82,7 +82,7 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     {TIM2,  0xffffffff,  GPIOA,  {PA_5,  GPIO_PIN_5,  PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
     {TIM2,  0xffffffff,  GPIOA,  {PA_15, GPIO_PIN_15, PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
 
-    {TIM5,  0xffffffff,  GPIOA,  {PA_0,  GPIO_PIN_0,  PA_1,  GPIO_PIN_1},  GPIO_AF2_TIM5},
+    // {TIM5,  0xffffffff,  GPIOA,  {PA_0,  GPIO_PIN_0,  PA_1,  GPIO_PIN_1},  GPIO_AF2_TIM5},
     // {TIM5,  0xffffffff,  GPIOH, PH_10, GPIO_PIN_10, PH_11, GPIO_PIN_11, GPIO_AF2_TIM5}, データシート上にはあるがPH_10などはない
     #elif defined (TARGET_NUCLEO_F767ZI) // ok
     // TIM2, TIM5...32bit TIM1, TIM3, TIM4, TIM8...16bit 
@@ -100,7 +100,7 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     {TIM4,  0xffff,  GPIOB,  {PB_6,  GPIO_PIN_6,  PB_7,  GPIO_PIN_7},  GPIO_AF2_TIM4},
     {TIM4,  0xffff,  GPIOD,  {PD_12, GPIO_PIN_12, PD_13, GPIO_PIN_13}, GPIO_AF2_TIM4},
 
-    {TIM8,  0xffff,  GPIOC,  {PC_6,  GPIO_PIN_6,  PC_7,  GPIO_PIN_7},  GPIO_AF3_TIM8},
+    // {TIM8,  0xffff,  GPIOC,  {PC_6,  GPIO_PIN_6,  PC_7,  GPIO_PIN_7},  GPIO_AF3_TIM8},
     // {TIM8,  0xffff,  GPIOC, PI_5,  GPIO_PIN_5,  PI_6,  GPIO_PIN_6,  GPIO_AF3_TIM8}, データシート上にはあるがPI_5などはない
 
     // 32bit
@@ -108,12 +108,12 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     {TIM2,  0xffffffff,  GPIOA,  {PA_5,  GPIO_PIN_5,  PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},    // PA_1が見当たらない
     {TIM2,  0xffffffff,  GPIOA,  {PA_15, GPIO_PIN_15, PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},  //
 
-    {TIM5,  0xffffffff,  GPIOA, PA_0, GPIO_PIN_0, PA_1, GPIO_PIN_1, GPIO_AF2_TIM5}, 
+    {TIM5,  0xffffffff,  GPIOA,  {PA_0,  GPIO_PIN_0,  PA_1,  GPIO_PIN_1}, GPIO_AF2_TIM5}, 
     // {TIM5,  0xffffffff,  GPIOH, PH_10, GPIO_PIN_10, PH_11, GPIO_PIN_11, GPIO_AF2_TIM5}, データシート上にはあるがPH_10などはない
     #endif
 };
 
-STM32_encoder::STM32_encoder(PinName slit_a, PinName slit_b, int resolution = 200, int times = 4) : _a(slit_a), _b(slit_b), _resolution(resolution), _times(times)
+STM32_encoder::STM32_encoder(PinName slit_a, PinName slit_b, int resolution = 200, int times = 4) : _a(slit_a),  _b(slit_b) , _resolution(resolution), _times(times)
 {
     GPIO_InitPeriph(slit_a, slit_b);
 }
@@ -122,29 +122,62 @@ void STM32_encoder::GPIO_InitPeriph(PinName slit_a, PinName slit_b)
 {
     for(const TIM_Pin_Map& mapping : tim_mappings){ // 配列の全要素の走査
         if(mapping.Pin_name.pin_a == slit_a && mapping.Pin_name.pin_b == slit_b){ // 引数で指定されたピンがTIM_Pin_Mapとあっているか確認
-            if(mapping.tim_instance == TIM2){
-                __TIM2_CLK_ENABLE();
-            }else if(mapping.tim_instance == TIM3){
-                __TIM3_CLK_ENABLE();
-            }/*else if(mapping.tim_instance == TIM4){ // f072rb f303k8 x
-                __TIM4_CLK_ENABLE();
-            }else if(mapping.tim_instance == TIM5){ // f072rb f303k8 x
-                __TIM5_CLK_ENABLE();
-            }*/
+            #ifdef TIM1
+                if(mapping.tim_instance == TIM1){
+                    __TIM1_CLK_ENABLE();
+                }
+            #endif
+            #ifdef TIM2
+                if(mapping.tim_instance == TIM2){
+                    __TIM2_CLK_ENABLE();
+                }
+            #endif
+            #ifdef TIM3
+                if(mapping.tim_instance == TIM3){
+                    __TIM3_CLK_ENABLE();
+                }
+            #endif                
+            #ifdef TIM4
+                if(mapping.tim_instance == TIM4){ // f072rb f303k8 x
+                    __TIM4_CLK_ENABLE();
+                }
+            #endif            
+            #ifdef TIM5
+                if(mapping.tim_instance == TIM5){ // f072rb f303k8 x
+                    __TIM5_CLK_ENABLE();
+                }
+            #endif
 
-            if(mapping.gpio_port == GPIOA){
-                __GPIOA_CLK_ENABLE();
-            }else if(mapping.gpio_port == GPIOB){
-                __GPIOB_CLK_ENABLE();
-            }else if(mapping.gpio_port == GPIOC){
-                __GPIOC_CLK_ENABLE();
-            }else if(mapping.gpio_port == GPIOD){
-                __GPIOD_CLK_ENABLE();
-            }/*else if(mapping.gpio_port == GPIOE){ // f303k8 x
-                __GPIOE_CLK_ENABLE();
-            }else if(mapping.gpio_port == GPIOH){ // f072rb f303k8 x
-                __GPIOH_CLK_ENABLE();
-            }*/
+            #ifdef GPIOA
+                if(mapping.gpio_port == GPIOA){
+                    __GPIOA_CLK_ENABLE();
+                }
+            #endif
+            #ifdef GPIOB
+                if(mapping.gpio_port == GPIOB){
+                    __GPIOB_CLK_ENABLE();
+                }
+            #endif
+            #ifdef GPIOC
+                if(mapping.gpio_port == GPIOC){
+                    __GPIOC_CLK_ENABLE();
+                }
+            #endif
+            #ifdef GPIOD
+                if(mapping.gpio_port == GPIOD){
+                    __GPIOD_CLK_ENABLE();
+                }
+            #endif
+            #ifdef GPIOE
+                if(mapping.gpio_port == GPIOE){ // f303k8 x
+                    __GPIOE_CLK_ENABLE();
+                }
+            #endif
+            #ifdef GPIOH
+                if(mapping.gpio_port == GPIOH){ // f072rb f303k8 x
+                    __GPIOH_CLK_ENABLE();
+                }
+            #endif
 
             _GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
             _GPIO_InitStruct.Pull = GPIO_PULLDOWN; // デフォルト...プルダウン
