@@ -41,11 +41,11 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     {TIM4,  0xffff,  GPIOD,  {PD_12, GPIO_PIN_12, PD_13, GPIO_PIN_13}, GPIO_AF2_TIM4},
 
     // 32bit
-    {TIM2,  0xffffffff,  GPIOA,  {PA_0,  GPIO_PIN_0,  PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
+    // {TIM2,  0xffffffff,  GPIOA,  {PA_0,  GPIO_PIN_0,  PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
     {TIM2,  0xffffffff,  GPIOA,  {PA_5,  GPIO_PIN_5,  PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
     {TIM2,  0xffffffff,  GPIOA,  {PA_15, GPIO_PIN_15, PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
 
-    // {TIM5,  0xffffffff,  GPIOA,  {PA_0,  GPIO_PIN_0,  PA_1,  GPIO_PIN_1},  GPIO_AF2_TIM5},
+    {TIM5,  0xffffffff,  GPIOA,  {PA_0,  GPIO_PIN_0,  PA_1,  GPIO_PIN_1},  GPIO_AF2_TIM5},
     // {TIM5,  0xffffffff,  GPIOH,  {PH_10, GPIO_PIN_10, PH_11, GPIO_PIN_11}, GPIO_AF2_TIM5},
 
 
@@ -61,11 +61,11 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     {TIM4,  0xffff,  GPIOD,  {PD_12, GPIO_PIN_12, PD_13, GPIO_PIN_13}, GPIO_AF2_TIM4}, 
 
     // 32bit
-    {TIM2,  0xffffffff,  GPIOA,  {PA_0,  GPIO_PIN_0,  PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
+    // {TIM2,  0xffffffff,  GPIOA,  {PA_0,  GPIO_PIN_0,  PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
     {TIM2,  0xffffffff,  GPIOA,  {PA_5,  GPIO_PIN_5,  PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
     {TIM2,  0xffffffff,  GPIOA,  {PA_15, GPIO_PIN_15, PA_1,  GPIO_PIN_1},  GPIO_AF1_TIM2},
 
-    // {TIM5,  0xffffffff,  GPIOA,  {PA_0,  GPIO_PIN_0,  PA_1,  GPIO_PIN_1},  GPIO_AF2_TIM5},
+    {TIM5,  0xffffffff,  GPIOA,  {PA_0,  GPIO_PIN_0,  PA_1,  GPIO_PIN_1},  GPIO_AF2_TIM5},
     // {TIM5,  0xffffffff,  GPIOH, PH_10, GPIO_PIN_10, PH_11, GPIO_PIN_11, GPIO_AF2_TIM5},
     #elif defined (TARGET_NUCLEO_F767ZI) // ok
     // TIM2, TIM5...32bit TIM1, TIM3, TIM4, TIM8...16bit 
@@ -78,12 +78,12 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     {TIM3,  0xffff,  GPIOA,  {PA_6,  GPIO_PIN_6,  PA_7,  GPIO_PIN_7},  GPIO_AF2_TIM3},
     {TIM3,  0xffff,  GPIOB,  {PB_0,  GPIO_PIN_0,  PB_1,  GPIO_PIN_1},  GPIO_AF2_TIM3},
     {TIM3,  0xffff,  GPIOB,  {PB_4,  GPIO_PIN_4,  PB_5,  GPIO_PIN_5},  GPIO_AF2_TIM3},
-    {TIM3,  0xffff,  GPIOC,  {PC_6,  GPIO_PIN_6,  PC_7,  GPIO_PIN_7},  GPIO_AF2_TIM3},
+    // {TIM3,  0xffff,  GPIOC,  {PC_6,  GPIO_PIN_6,  PC_7,  GPIO_PIN_7},  GPIO_AF2_TIM3},
 
     {TIM4,  0xffff,  GPIOB,  {PB_6,  GPIO_PIN_6,  PB_7,  GPIO_PIN_7},  GPIO_AF2_TIM4},
     {TIM4,  0xffff,  GPIOD,  {PD_12, GPIO_PIN_12, PD_13, GPIO_PIN_13}, GPIO_AF2_TIM4},
 
-    // {TIM8,  0xffff,  GPIOC,  {PC_6,  GPIO_PIN_6,  PC_7,  GPIO_PIN_7},  GPIO_AF3_TIM8},
+    {TIM8,  0xffff,  GPIOC,  {PC_6,  GPIO_PIN_6,  PC_7,  GPIO_PIN_7},  GPIO_AF3_TIM8},
     // {TIM8,  0xffff,  GPIOC, PI_5,  GPIO_PIN_5,  PI_6,  GPIO_PIN_6,  GPIO_AF3_TIM8},
 
     // 32bit
