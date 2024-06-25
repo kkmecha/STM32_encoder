@@ -6,7 +6,7 @@
 class Interrupt_encoder{
     public: 
     Interrupt_encoder(PinName a, PinName b, int resolution = 200, int times = 4);
-    int start();
+    int get_count();
     void reset();
     private:
     void pulse_a();
