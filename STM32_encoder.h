@@ -2,9 +2,6 @@
 #define __STM32_ENCODER__
 
 #include "mbed.h"
-#include "Interrupt_encoder.h"
-
-class Interrupt_encoder;
 
 typedef struct{
     PinName pin_a;
