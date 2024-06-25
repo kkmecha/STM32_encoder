@@ -2,6 +2,9 @@
 #define __STM32_ENCODER__
 
 #include "mbed.h"
+#include "Interrupt_encoder.h"
+
+class Interrupt_encoder;
 
 typedef struct{
     PinName pin_a;
@@ -36,5 +39,4 @@ class STM32_encoder{
     GPIO_InitTypeDef _GPIO_InitStruct;
     TIM_Encoder_InitTypeDef _encoder;
 };
-
 #endif
