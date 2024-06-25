@@ -1,5 +1,6 @@
 #include "mbed.h"
-#include "STM32_encoder.h"
+#include "STM32_encoder.h" // class definition STM32_encoder
+#include "Interrupt_encoder.h" // class definition Interrupt encoder 
 
 const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     // TIM_TypeDef*, GPIO_TypeDef*, (PinName, uint16_t)x2, uint8_t
@@ -96,9 +97,10 @@ const TIM_Pin_Map tim_mappings[] = { // 独自のpinmap
     #endif
 };
 
-STM32_encoder::STM32_encoder(PinName slit_a, PinName slit_b, int resolution, int times) : _a(slit_a),  _b(slit_b) , _resolution(resolution), _times(times)
+STM32_encoder::STM32_encoder(PinName slit_a, PinName slit_b, int resolution, int times)
+              : _a(slit_a),  _b(slit_b) , _resolution(resolution), _times(times)
 {
-    GPIO_InitPeriph(slit_a, slit_b);
+    GPIO_InitPeriph(_a, _b);
 }
  
 void STM32_encoder::GPIO_InitPeriph(PinName slit_a, PinName slit_b)
@@ -172,7 +174,8 @@ void STM32_encoder::GPIO_InitPeriph(PinName slit_a, PinName slit_b)
     }
 }
 
-void STM32_encoder::start(){
+void STM32_encoder::start()
+{
     // timer
     for(const TIM_Pin_Map& mapping : tim_mappings){
         if(mapping.Pin_name.pin_a == _a && mapping.Pin_name.pin_b == _b){
@@ -201,13 +204,15 @@ void STM32_encoder::start(){
     HAL_TIM_Encoder_Start(&_htim,TIM_CHANNEL_ALL);
 }
 
-void STM32_encoder::reset(){
+void STM32_encoder::reset()
+{
     core_util_critical_section_enter(); // ほかのスレッド、ルーチンなどからの変数等のアクセスを制限(Mutexに似てる)
     __HAL_TIM_CLEAR_FLAG(&_htim, TIM_IT_UPDATE);
     core_util_critical_section_exit(); // 制限を開放
 }
 
-int32_t  STM32_encoder::get_count(){
+int32_t  STM32_encoder::get_count()
+{
     int32_t _count, _angle;
     core_util_critical_section_enter();
     _count = _htim.Instance->CNT;
@@ -224,4 +229,44 @@ int32_t  STM32_encoder::get_count(){
     //printf("count:%lu, hbits:%lu, (_hbits << 16) | _count:%ld\r\n", _count, _hbits, (_hbits << 16) | _count);
     //ThisThread::sleep_for(5ms);
     return _angle;
+}
+
+
+
+Interrupt_encoder::Interrupt_encoder(PinName a, PinName b, int resolution, int times)
+                  : _slit_a(a), _slit_b(b), _resolution(resolution), _times(times)
+{  
+    callback_pulse_a = callback(this, &Interrupt_encoder::pulse_a);
+    callback_pulse_b = callback(this, &Interrupt_encoder::pulse_a);
+    _angle_per_pulse = 360.0 / _resolution * _times;
+}
+
+int Interrupt_encoder::start(){
+    _slit_a.rise(callback_pulse_a);
+    _slit_a.fall(callback_pulse_a);
+    _slit_b.rise(callback_pulse_b);
+    _slit_b.fall(callback_pulse_b);
+
+    _angle = (int)(_count / _angle_per_pulse); 
+    return _angle;
+}
+
+void Interrupt_encoder::reset(){
+    _angle = 0;
+}
+
+void Interrupt_encoder::pulse_a(){
+    if(_slit_a != _slit_b){
+        _count++;
+    }else{
+        _count--;
+    }
+}
+
+void Interrupt_encoder::pulse_b(){
+    if(_slit_a == _slit_b){
+        _count++;
+    }else{
+        _count--;
+    }
 }
