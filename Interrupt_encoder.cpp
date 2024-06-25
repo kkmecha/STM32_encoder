@@ -9,7 +9,7 @@ Interrupt_encoder::Interrupt_encoder(PinName a, PinName b, int resolution, int t
     _angle_per_pulse = 360.0 / _resolution * _times;
 }
 
-int Interrupt_encoder::start(){
+int Interrupt_encoder::get_count(){
     _slit_a.rise(callback_pulse_a);
     _slit_a.fall(callback_pulse_a);
     _slit_b.rise(callback_pulse_b);
